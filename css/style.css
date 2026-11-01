@@ -1672,7 +1672,304 @@ body.quick-ai-open .ai-quick-launcher { transform: rotate(8deg); }
   .community-composer-footer { align-items: stretch; flex-direction: column; gap: 6px; }
   .community-composer-footer .btn { width: 100%; min-height: 42px; }
   .community-notification { align-items: flex-start; flex-wrap: wrap; }
-  .community-notification .btn { margin-left: 38px; }
+.community-notification .btn { margin-left: 38px; }
+}
+
+/* ============================================================================
+   Dashboard responsive foundation
+   Keep the dashboard inside the viewport at phone and tablet widths.  The
+   search controls and lead workspace intentionally collapse into one clear
+   column; only dense status/action rows get their own contained scroller.
+   ============================================================================ */
+body[data-page="dashboard"] {
+  overflow-x: hidden;
+}
+
+body[data-page="dashboard"] .app-layout,
+body[data-page="dashboard"] .workspace,
+body[data-page="dashboard"] .workspace > *,
+body[data-page="dashboard"] .panel,
+body[data-page="dashboard"] .lead-results-workspace,
+body[data-page="dashboard"] .lead-results-section {
+  min-width: 0;
+  max-width: 100%;
+}
+
+body[data-page="dashboard"] .dashboard-hero > div:first-child,
+body[data-page="dashboard"] .section-header > div:first-child,
+body[data-page="dashboard"] .lead-card__top > div:first-child {
+  min-width: 0;
+}
+
+body[data-page="dashboard"] .dashboard-hero p,
+body[data-page="dashboard"] .section-header p,
+body[data-page="dashboard"] .lead-card p,
+body[data-page="dashboard"] .notice {
+  overflow-wrap: anywhere;
+}
+
+body[data-page="dashboard"] .lead-results-workspace #leadResults,
+body[data-page="dashboard"] #localSavedLeads {
+  min-width: 0;
+}
+
+body[data-page="dashboard"] .lead-results-workspace .lead-map-panel,
+body[data-page="dashboard"] .lead-results-workspace .map-preview,
+body[data-page="dashboard"] .lead-results-workspace .map-preview iframe {
+  max-width: 100%;
+}
+
+@media (max-width: 1100px) {
+  body[data-page="dashboard"] .dashboard-hero {
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    flex: 0 1 360px;
+    min-width: 0;
+  }
+
+  body[data-page="dashboard"] .dashboard-command-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-page="dashboard"] .dashboard-command-grid .panel {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  body[data-page="dashboard"] .workspace {
+    width: 100%;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero,
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    width: 100%;
+    max-width: none;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    justify-content: flex-start;
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace .lead-map-panel {
+    order: -1;
+    position: static;
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace #leadResults,
+  body[data-page="dashboard"] #localSavedLeads {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header,
+  body[data-page="dashboard"] .local-vault > .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar {
+    width: 100%;
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar .btn,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar .btn {
+    flex: 1 1 150px;
+  }
+}
+
+@media (max-width: 640px) {
+  body[data-page="dashboard"] .workspace {
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-left: max(12px, env(safe-area-inset-left));
+  }
+
+  body[data-page="dashboard"] .dashboard-hero {
+    gap: 18px;
+    padding: 19px 16px;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero h1 {
+    max-width: 100%;
+    font-size: clamp(1.75rem, 9vw, 2.2rem);
+    line-height: 1.04;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero p {
+    font-size: .86rem;
+  }
+
+  /* Keep the two hero actions usable without making the whole page scroll. */
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar > .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 8px;
+    font-size: .76rem;
+  }
+
+  /* The plan/usage copy remains one horizontal status row, but its scrolling
+     is contained in the status area instead of moving the dashboard itself. */
+  body[data-page="dashboard"] .dashboard-access-status {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+  }
+
+  body[data-page="dashboard"] .dashboard-access-status > * {
+    flex: 0 0 auto;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero-meta {
+    gap: 5px;
+    font-size: .68rem;
+  }
+
+  body[data-page="dashboard"] .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  body[data-page="dashboard"] .metrics-grid .metric {
+    min-height: 122px;
+    padding: 13px;
+  }
+
+  body[data-page="dashboard"] .metric-heading span {
+    overflow-wrap: anywhere;
+    font-size: .7rem;
+  }
+
+  body[data-page="dashboard"] .metric strong {
+    font-size: clamp(1.35rem, 8vw, 1.85rem);
+  }
+
+  body[data-page="dashboard"] .dashboard-quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body[data-page="dashboard"] .form-grid,
+  body[data-page="dashboard"] .form-grid.compact,
+  body[data-page="dashboard"] .local-lead-tools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .search-panel,
+  body[data-page="dashboard"] .saved-search-panel,
+  body[data-page="dashboard"] .lead-command-center,
+  body[data-page="dashboard"] .local-vault {
+    padding: 14px;
+  }
+
+  body[data-page="dashboard"] .search-panel .field[style*="grid-column"],
+  body[data-page="dashboard"] .search-panel .notice[style*="grid-column"] {
+    grid-column: auto !important;
+  }
+
+  body[data-page="dashboard"] .form-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  body[data-page="dashboard"] .form-actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 8px;
+    font-size: .74rem;
+  }
+
+  body[data-page="dashboard"] .saved-search-panel > .toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .saved-search-panel > .toolbar input,
+  body[data-page="dashboard"] .saved-search-panel > .toolbar .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace #leadResults,
+  body[data-page="dashboard"] #localSavedLeads {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .lead-card {
+    padding: 14px;
+  }
+
+  body[data-page="dashboard"] .lead-card__top,
+  body[data-page="dashboard"] .lead-actions {
+    min-width: 0;
+  }
+
+  body[data-page="dashboard"] .lead-actions .btn,
+  body[data-page="dashboard"] .contact-action-grid .btn {
+    flex: 1 1 130px;
+    min-width: 0;
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace .map-preview {
+    aspect-ratio: 16 / 10;
+  }
+
+  body[data-page="dashboard"] .pagination-controls {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  body[data-page="dashboard"] .dashboard-quick-actions,
+  body[data-page="dashboard"] .form-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .dashboard-quick-actions a,
+  body[data-page="dashboard"] .form-actions .btn {
+    min-height: 42px;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .dashboard-access-status {
+    grid-column: auto;
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar .btn,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar .btn {
+    width: 100%;
+    flex: none;
+  }
 }
 
 @media (max-width: 380px) {
@@ -1741,6 +2038,261 @@ body.quick-ai-open .ai-quick-launcher { transform: rotate(8deg); }
   .community-composer-footer .btn { width: 100%; min-height: 42px; }
   .community-notification { align-items: flex-start; flex-wrap: wrap; }
   .community-notification .btn { margin-left: 38px; }
+}
+
+/* ============================================================================
+   Dashboard responsive final layer
+   This block deliberately comes last: shared page rules below the original
+   dashboard styles used to re-enable horizontal toolbars on small screens.
+   ============================================================================ */
+body[data-page="dashboard"] {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body[data-page="dashboard"] .app-layout,
+body[data-page="dashboard"] .workspace,
+body[data-page="dashboard"] .workspace > *,
+body[data-page="dashboard"] .dashboard-hero,
+body[data-page="dashboard"] .dashboard-hero > *,
+body[data-page="dashboard"] .detail-layout,
+body[data-page="dashboard"] .lead-results-section,
+body[data-page="dashboard"] .panel,
+body[data-page="dashboard"] .field,
+body[data-page="dashboard"] .lead-card,
+body[data-page="dashboard"] .lead-card__top,
+body[data-page="dashboard"] .lead-card__top > *,
+body[data-page="dashboard"] .toolbar {
+  min-width: 0;
+}
+
+body[data-page="dashboard"] .lead-card h3,
+body[data-page="dashboard"] .lead-card p,
+body[data-page="dashboard"] .notice,
+body[data-page="dashboard"] .saved-search-item,
+body[data-page="dashboard"] .action-card__body {
+  overflow-wrap: anywhere;
+}
+
+body[data-page="dashboard"] .table-wrap {
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+
+@media (max-width: 1024px) {
+  body[data-page="dashboard"] .workspace-header.dashboard-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    width: 100%;
+    max-width: none;
+    justify-content: flex-start;
+  }
+
+  body[data-page="dashboard"] .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace .lead-map-panel {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 700px) {
+  body[data-page="dashboard"] .workspace {
+    padding: 16px max(12px, env(safe-area-inset-right)) 30px max(12px, env(safe-area-inset-left));
+  }
+
+  body[data-page="dashboard"] .topbar {
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  body[data-page="dashboard"] .topbar-actions {
+    min-width: 0;
+  }
+
+  body[data-page="dashboard"] .workspace-header.dashboard-hero {
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 18px 15px;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero h1 {
+    font-size: clamp(1.7rem, 8.7vw, 2.25rem);
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  body[data-page="dashboard"] .dashboard-hero .toolbar > .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 8px;
+    font-size: .76rem;
+  }
+
+  body[data-page="dashboard"] .dashboard-access-status {
+    grid-column: 1 / -1;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+  }
+
+  body[data-page="dashboard"] .dashboard-access-status > * {
+    flex: 0 0 auto;
+  }
+
+  body[data-page="dashboard"] .metrics-grid,
+  body[data-page="dashboard"] .dashboard-quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  body[data-page="dashboard"] .metrics-grid .metric {
+    min-height: 118px;
+    padding: 12px;
+  }
+
+  body[data-page="dashboard"] .metric-heading span {
+    font-size: .69rem;
+    overflow-wrap: anywhere;
+  }
+
+  body[data-page="dashboard"] .metric strong {
+    font-size: clamp(1.3rem, 7.4vw, 1.8rem);
+  }
+
+  body[data-page="dashboard"] .dashboard-command-grid,
+  body[data-page="dashboard"] .form-grid,
+  body[data-page="dashboard"] .form-grid.compact,
+  body[data-page="dashboard"] .local-lead-tools,
+  body[data-page="dashboard"] .lead-results-workspace,
+  body[data-page="dashboard"] #leadResults,
+  body[data-page="dashboard"] #localSavedLeads {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .search-panel,
+  body[data-page="dashboard"] .saved-search-panel,
+  body[data-page="dashboard"] .lead-command-center,
+  body[data-page="dashboard"] .local-vault,
+  body[data-page="dashboard"] .lead-map-panel {
+    padding: 14px;
+  }
+
+  body[data-page="dashboard"] .search-panel .field[style*="grid-column"],
+  body[data-page="dashboard"] .search-panel .notice[style*="grid-column"] {
+    grid-column: auto !important;
+  }
+
+  body[data-page="dashboard"] .form-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  body[data-page="dashboard"] .form-actions .btn,
+  body[data-page="dashboard"] .lead-actions .btn,
+  body[data-page="dashboard"] .contact-action-grid .btn {
+    min-width: 0;
+    width: 100%;
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header,
+  body[data-page="dashboard"] .local-vault > .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar .btn,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body[data-page="dashboard"] .lead-card {
+    padding: 14px;
+  }
+
+  body[data-page="dashboard"] .lead-results-workspace .map-preview {
+    aspect-ratio: 16 / 10;
+  }
+
+  body[data-page="dashboard"] .action-drawer {
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: max(18px, env(safe-area-inset-right));
+    padding-left: max(18px, env(safe-area-inset-left));
+  }
+
+  body[data-page="dashboard"] .quick-ai-panel {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: 76px;
+    left: max(10px, env(safe-area-inset-left));
+    width: auto;
+    max-width: none;
+  }
+
+  body[data-page="dashboard"] .ai-quick-launcher {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 420px) {
+  body[data-page="dashboard"] .dashboard-hero .toolbar,
+  body[data-page="dashboard"] .form-actions,
+  body[data-page="dashboard"] .lead-command-center .section-header .toolbar,
+  body[data-page="dashboard"] .local-vault > .section-header .toolbar,
+  body[data-page="dashboard"] .dashboard-quick-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .dashboard-access-status {
+    grid-column: auto;
+  }
+
+  body[data-page="dashboard"] .metrics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="dashboard"] .dashboard-hero-meta {
+    font-size: .67rem;
+  }
+
+  body[data-page="dashboard"] .pagination-controls {
+    width: 100%;
+  }
 }
 
 @media (max-width: 380px) {
