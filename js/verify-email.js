@@ -38,9 +38,9 @@ async function runVerification(token) {
     if (result.verified) {
       clearPending();
       const line = byId("verifySuccessLine");
-      if (line && result.email) line.textContent = `${result.email} is verified. Taking you to the login page…`;
+      if (line && result.email) line.textContent = `${result.email} is verified. Taking you to your dashboard...`;
       show("verifySuccess");
-      setTimeout(() => { window.location.href = "/login.html?verified=1"; }, 2200);
+      setTimeout(() => { window.location.href = "/dashboard.html"; }, 1200);
       return true;
     }
   } catch (error) {
@@ -71,8 +71,6 @@ function bindResendForm(formId, statusId, emailFallback) {
       try {
         localStorage.setItem(PENDING_KEY, JSON.stringify({
           email,
-          url: result.verificationUrl || "",
-          token: result.verificationToken || "",
           sent: Boolean(result.verificationSent),
           at: Date.now()
         }));
@@ -89,26 +87,49 @@ function refreshPendingButton(email) {
   const button = byId("openPendingLink");
   if (!button) return;
   const pending = readPending();
-  const usable = pending && (pending.token || pending.url) && (!email || !pending.email || pending.email === email);
-  button.hidden = !usable;
+  button.hidden = true;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token") || "";
   const email = params.get("email") || "";
+  const deliverySent = params.get("sent") !== "0";
   const pending = readPending();
+
+  const firebaseCode = params.get("oobCode") || "";
+  if (firebaseCode) {
+    show("verifyWorking");
+    import("./firebase-auth.js")
+      .then(async ({ applyEmailVerificationCode, auth, sessionWithBackend }) => {
+        await applyEmailVerificationCode(firebaseCode);
+        const user = auth.currentUser;
+        if (!user) return false;
+        await user.reload();
+        if (!user.emailVerified) throw new Error("Your email has not been verified yet.");
+        await sessionWithBackend(user);
+        return true;
+      })
+      .then(() => {
+        clearPending();
+        const line = byId("verifySuccessLine");
+        if (line) line.textContent = "Your email is verified. Taking you to your dashboard...";
+        show("verifySuccess");
+        setTimeout(() => { window.location.href = "/dashboard.html"; }, 1200);
+      })
+      .catch((error) => {
+        const line = byId("verifyErrorLine");
+        if (line) line.textContent = error.message || "We could not verify that link.";
+        show("verifyError");
+      });
+    return;
+  }
 
   bindResendForm("resendForm", "resendStatus", email);
   bindResendForm("errorResendForm", "errorResendStatus", email);
 
   const openPending = byId("openPendingLink");
-  openPending?.addEventListener("click", () => {
-    const stored = readPending();
-    const storedToken = stored?.token || "";
-    if (storedToken) runVerification(storedToken);
-    else if (stored?.url) window.location.href = stored.url;
-  });
+  openPending?.setAttribute("hidden", "");
 
   if (token) {
     runVerification(token);
@@ -118,7 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // No token in the URL — show the "check your inbox" state.
   const target = email || pending?.email || "";
   const sentLine = byId("verifySentLine");
-  if (sentLine && target) sentLine.textContent = `We sent a verification link to ${target}.`;
+  if (sentLine && target) sentLine.textContent = deliverySent
+    ? `We sent a verification link to ${target}.`
+    : `We could not send a verification link to ${target} yet. Configure transactional email, then use Resend below.`;
   const resendField = byId("resendEmail");
   if (resendField && target) resendField.value = target;
   const errorField = byId("errorResendEmail");
