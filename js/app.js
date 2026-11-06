@@ -62,7 +62,11 @@ function initAuthForm() {
           if (status) status.textContent = "Success. Redirecting...";
           redirectAfterAuth();
         } catch (fallbackError) {
-          if (status) status.textContent = fallbackError.message || error.message || "Sign-up failed. Please try again.";
+          if (status && fallbackError.code === "ACCOUNT_EXISTS") {
+            status.textContent = "This account already exists. Use Log in, then choose Resend verification link if needed.";
+          } else if (status) {
+            status.textContent = fallbackError.message || error.message || "Sign-up failed. Please try again.";
+          }
         }
       }
       return;

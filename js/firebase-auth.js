@@ -69,6 +69,25 @@ export async function registerWithEmail(name, email, password, status) {
     if (status) status.textContent = "Verification email sent. Check your inbox to activate your workspace...";
     window.location.href = `/verify-email.html?email=${encodeURIComponent(email)}`;
   } catch (error) {
+    if (String(error?.code || "").includes("email-already-in-use")) {
+      try {
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        await credential.user.reload();
+        if (credential.user.emailVerified) {
+          throw new Error("This email is already verified. Please sign in instead.");
+        }
+        await sendEmailVerification(credential.user, {
+          url: `${window.location.origin}/verify-email.html`,
+          handleCodeInApp: true
+        });
+        try { localStorage.setItem("mat_pending_verification", JSON.stringify({ email, at: Date.now() })); } catch {}
+        if (status) status.textContent = "Your account already exists but is not verified. A new verification email was sent.";
+        window.location.href = `/verify-email.html?email=${encodeURIComponent(email)}`;
+        return;
+      } catch (resendError) {
+        error = resendError;
+      }
+    }
     if (status) status.textContent = friendlyAuthError(error);
     throw error;
   }
@@ -153,6 +172,8 @@ function friendlyAuthError(error) {
   if (code.includes("user-not-found") || code.includes("wrong-password") || code.includes("invalid-credential")) return "Invalid email or password.";
   if (code.includes("operation-not-allowed")) return "Email and password sign-in is temporarily unavailable. Please try again in a moment.";
   if (code.includes("unauthorized-domain")) return "Sign-in from this site is not enabled yet. Please contact support.";
+  if (code.includes("invalid-api-key")) return "Firebase configuration is invalid. Check the Firebase Web API key.";
+  if (code.includes("network-request-failed")) return "Firebase could not be reached. Check your network connection and try again.";
   const raw = String(error?.message || "");
   if (!raw || /firebase|auth\/[a-z-]+/i.test(raw)) return "Something went wrong. Please try again.";
   return raw;
