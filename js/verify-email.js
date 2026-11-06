@@ -101,13 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (firebaseCode) {
     show("verifyWorking");
     import("./firebase-auth.js")
-      .then(async ({ applyEmailVerificationCode, auth, sessionWithBackend }) => {
+      .then(async ({ applyEmailVerificationCode, auth, sessionWithBackend, waitForFirebaseUser }) => {
         await applyEmailVerificationCode(firebaseCode);
-        const user = auth.currentUser;
-        if (!user) return false;
+        const user = auth.currentUser || await waitForFirebaseUser();
         await user.reload();
         if (!user.emailVerified) throw new Error("Your email has not been verified yet.");
-        await sessionWithBackend(user);
+        const session = await sessionWithBackend(user);
+        if (!session?.accessToken && !session?.idToken) throw new Error("Your email was verified, but your MAT LEADS session could not be created. Please sign in once, then open the verification link again.");
         return true;
       })
       .then(() => {

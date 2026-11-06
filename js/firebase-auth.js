@@ -37,6 +37,27 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 auth.useDeviceLanguage();
 
+export function waitForFirebaseUser(timeoutMs = 8000) {
+  if (auth.currentUser) return Promise.resolve(auth.currentUser);
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    let unsubscribe = () => {};
+    const timeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      unsubscribe();
+      reject(new Error("The verified account session was not found in this browser. Open the verification email on the same device where you signed up, then try again."));
+    }, timeoutMs);
+    unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (settled || !user) return;
+      settled = true;
+      clearTimeout(timeout);
+      unsubscribe();
+      resolve(user);
+    });
+  });
+}
+
 export async function sessionWithBackend(firebaseUser, extra = {}) {
   const idToken = await firebaseUser.getIdToken(true);
   const result = await apiFetch("/api/auth/firebase", { method: "POST", body: JSON.stringify({ idToken, ...extra }) });
